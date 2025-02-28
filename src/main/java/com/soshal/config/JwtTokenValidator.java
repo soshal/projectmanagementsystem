@@ -38,16 +38,25 @@ public class JwtTokenValidator extends OncePerRequestFilter {
                 SecretKey key = Keys.hmacShaKeyFor(Base64.getDecoder().decode(JWTAUTH.SECRET_KEY));
 
                 // Parse JWT and extract claims
-                Claims claims = Jwts.parserBuilder()
-                        .setSigningKey(key)
-                        .build()
-                        .parseClaimsJws(jwt)
-                        .getBody();
+
+
+                Claims claims;
+                try {
+
+                    claims = Jwts.parserBuilder()
+                            .setSigningKey(key)
+                            .build()
+                            .parseClaimsJws(jwt)
+                            .getBody();
+
+                } catch (Exception e) {
+                    response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+                    response.getWriter().write("Invalid JWT: " + e.getMessage());
+                    return;
+                }
 
                 String email = claims.getSubject();
                 String authorities = claims.get("authorities", String.class);
-
-                // Handle null authorities
                 List<GrantedAuthority> auths = (authorities != null)
                         ? AuthorityUtils.commaSeparatedStringToAuthorityList(authorities)
                         : List.of();
