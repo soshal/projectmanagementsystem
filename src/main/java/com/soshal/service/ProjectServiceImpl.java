@@ -5,6 +5,7 @@ import com.soshal.modal.User;
 import com.soshal.modal.Chat;
 import com.soshal.repository.ProjectRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -14,13 +15,28 @@ import java.util.stream.Collectors;
 public class ProjectServiceImpl implements ProjectService {
 
     @Autowired
+    @Lazy
     private ProjectRepository projectRepository;
 
     @Autowired
-    private ChatServiceImpl chatService;
+    @Lazy
+    private ChatService chatService;
 
     @Autowired
+    @Lazy
     private UserServiceImpl userService;
+
+
+
+
+
+    @Autowired
+    public ProjectServiceImpl(ProjectRepository projectRepository, @Lazy ChatService chatService, UserServiceImpl userService) {
+        this.projectRepository = projectRepository;
+        this.chatService = chatService; // Inject the interface
+        this.userService = userService;
+    }
+
 
     @Override
     public Project createProject(Project project, User user) throws Exception {

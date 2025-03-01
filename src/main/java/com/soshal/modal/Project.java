@@ -32,11 +32,13 @@ public class Project {
     @OneToMany(mappedBy = "project", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Issue> issues = new ArrayList<>();
 
+
+
     @ManyToMany
     @JoinTable(
             name = "project_team",
             joinColumns = @JoinColumn(name = "project_id"),
             inverseJoinColumns = @JoinColumn(name = "user_id")
     )
-    private List<User>  Team = new ArrayList<>();
+    private List<User> team = new ArrayList<>();
 }

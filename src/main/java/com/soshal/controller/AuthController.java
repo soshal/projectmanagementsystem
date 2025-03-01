@@ -37,15 +37,13 @@ public class AuthController {
         this.subscriptionService = subscriptionService;
     }
 
-    // ✅ Fixed: User Registration (Prevents NullPointerException)
     @PostMapping("/sign")
     public ResponseEntity<User> createUserHandler(@RequestBody User user) throws Exception {
         if (user.getEmail() == null || user.getPassword() == null) {
             return ResponseEntity.badRequest().body(null);
         }
 
-        // Prevents NullPointerException
-        Optional<Optional<User>> existingUser = Optional.ofNullable(userRepository.findByEmail(user.getEmail()));
+        Optional<User> existingUser = userRepository.findByEmail(user.getEmail());
         if (existingUser.isPresent()) {
             return ResponseEntity.badRequest().build();
         }
@@ -56,7 +54,6 @@ public class AuthController {
         return ResponseEntity.ok(saved);
     }
 
-    // ✅ Fixed: Improved Login Authentication Handling
     @PostMapping("/login")
     public ResponseEntity<?> login(@RequestBody LoginRequest loginRequest) {
         try {
@@ -67,6 +64,8 @@ public class AuthController {
             String token = jwtProvider.generateToken(authentication);
             return ResponseEntity.ok(new AutoResponse(token, "Login successful"));
         } catch (Exception e) {
+            // Log the exception for debugging
+            e.printStackTrace();
             return ResponseEntity.status(401).body(new AutoResponse(null, "Invalid email or password"));
         }
     }
