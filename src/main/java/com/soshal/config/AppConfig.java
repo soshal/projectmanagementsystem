@@ -27,12 +27,12 @@ public class AppConfig {
     public AppConfig(JwtTokenValidator jwtTokenValidator) {
         this.jwtTokenValidator = jwtTokenValidator;
     }
-
     @Bean
     SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http.sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/api/**").authenticated()
+                        .requestMatchers("/api/auth/signup", "/api/auth/login").permitAll() // Allow public access to these endpoints
+                        .requestMatchers("/api/**").authenticated() // Secure all other /api/** endpoints
                         .anyRequest().permitAll()
                 )
                 .addFilterBefore(jwtTokenValidator, UsernamePasswordAuthenticationFilter.class)
@@ -55,13 +55,13 @@ public class AppConfig {
     @Bean
     public CorsConfigurationSource corsConfigSource() {
         CorsConfiguration configuration = new CorsConfiguration();
-        configuration.setAllowedOrigins(List.of("http://localhost:5173")); // Allow your React app's origin
-        configuration.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE")); // Allowed HTTP methods
-        configuration.setAllowedHeaders(List.of("Authorization", "Content-Type")); // Allowed headers
-        configuration.setAllowCredentials(true); // Allow cookies and credentials
+        configuration.setAllowedOrigins(List.of("http://localhost:5173")); // Frontend URL
+        configuration.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE"));
+        configuration.setAllowedHeaders(List.of("Authorization", "Content-Type"));
+        configuration.setAllowCredentials(true);
 
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
-        source.registerCorsConfiguration("/**", configuration); // Apply to all endpoints
+        source.registerCorsConfiguration("/**", configuration);
         return source;
     }
 }

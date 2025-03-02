@@ -37,7 +37,7 @@ public class AuthController {
         this.subscriptionService = subscriptionService;
     }
 
-    @PostMapping("/sign")
+    @PostMapping("/signup")
     public ResponseEntity<User> createUserHandler(@RequestBody User user) throws Exception {
         if (user.getEmail() == null || user.getPassword() == null) {
             return ResponseEntity.badRequest().body(null);
