@@ -31,7 +31,7 @@ public class AppConfig {
     SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http.sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/api/auth/signup", "/api/auth/login").permitAll() // Allow public access to these endpoints
+                        .requestMatchers("/api/auth/signup", "/api/auth/login","/api/projects/create").permitAll() // Allow public access to these endpoints
                         .requestMatchers("/api/**").authenticated() // Secure all other /api/** endpoints
                         .anyRequest().permitAll()
                 )

@@ -15,25 +15,20 @@ import java.util.Date;
 public class JwtProvider {
 
     private static final long EXPIRATION_TIME = 86400000; // 1 day in milliseconds
+    private static final SecretKey SECRET_KEY = Keys.secretKeyFor(SignatureAlgorithm.HS512); // Generate a secure 512-bit key
 
     public String generateToken(Authentication authentication) {
-       // SecretKey key = Keys.hmacShaKeyFor(Base64.getDecoder().decode(JWTAUTH.SECRET_KEY));
-        SecretKey key = Keys.hmacShaKeyFor(Base64.getDecoder().decode(JWTAUTH.SECRET_KEY));
-
         return Jwts.builder()
                 .setSubject(authentication.getName())
                 .setIssuedAt(new Date())
                 .setExpiration(new Date(System.currentTimeMillis() + EXPIRATION_TIME))
-                .signWith(key, SignatureAlgorithm.HS512)
+                .signWith(SECRET_KEY, SignatureAlgorithm.HS512)
                 .compact();
     }
 
-
     public String extractEmail(String token) {
-        SecretKey key = Keys.hmacShaKeyFor(Base64.getDecoder().decode(JWTAUTH.SECRET_KEY));
-
         Claims claims = Jwts.parserBuilder()
-                .setSigningKey(key)
+                .setSigningKey(SECRET_KEY)
                 .build()
                 .parseClaimsJws(token)
                 .getBody();
@@ -41,4 +36,3 @@ public class JwtProvider {
         return claims.getSubject(); // Assuming subject stores the email
     }
 }
-
